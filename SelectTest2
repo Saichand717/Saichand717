@@ -1,0 +1,98 @@
+package com.sai.project;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+import java.sql.DriverManager;
+
+//JDBC App to get EMP db Table record based on the given 3 designation
+
+public class SelectTest2 {
+
+	public static void main(String[] args) {
+		Scanner sc = null;
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			//read input
+			sc = new Scanner(System.in);
+			String desg1 = null, desg2=null,desg3=null;
+			if(sc!=null) {
+				System.out.println("Enter desg1::");
+				desg1=sc.next().toUpperCase(); //give CLERK
+				System.out.println("Enter desg2::");
+				desg2=sc.next().toUpperCase();//Give MANAGER
+				System.out.println("Enter desg3::");
+				desg3=sc.next().toUpperCase();//Give SALESMAN
+				
+			}//if
+			//Convert the input values as required SQL Query('CLERK','MANAGER','SALESMAN')
+			String cond ="('"+desg1+"','"+desg2+"','"+desg3+"')";
+			System.out.println(cond);
+			//load JDBC Driver
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			//Establish the connection with DB s/w
+			con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe","system","Dolly");
+			//Craete the Statement object
+			if(con!=null)
+				st=con.createStatement();
+			//Preapare Sql Query
+			//select empno,ename,job,sal from emp where job in ('CLERK','MANAGER','SALESMAN') order by job;
+			String query = "select empno,ename,job,sal from emp where job in"+cond+"ORDER BY JOB";
+			System.out.println(query);
+			//Send execute Query inDB s/w
+			if(st!=null)
+				rs=st.executeQuery(query);
+			//Process the resultSet Object
+			if(rs!=null)
+				while(rs.next()!=false) {
+					System.out.println(rs.getInt(1)+""+rs.getString(2)+""+rs.getString(3)+""+rs.getFloat(4));
+									
+				}//while
+			
+
+	}// try
+	catch(
+
+	SQLException se)
+	{
+		se.printStackTrace();
+	}catch(
+	ClassNotFoundException cnf)
+	{
+		cnf.printStackTrace();
+	}catch(
+	Exception e)
+	{
+		e.printStackTrace();
+	}finally
+	{
+	//close jdbc objs
+	try {
+		if(rs!=null)
+			rs.close();
+			}
+	catch(SQLException se) {
+		se.printStackTrace();
+	}
+	try {
+		if(con!=null)
+			con.close();
+			}
+	catch(SQLException se) {
+		se.printStackTrace();
+	}
+	try {
+		if(sc!=null)
+			sc.close();
+	}
+		catch(Exception e) {
+			e.printStackTrace();
+			
+		}//finally
+	}// main
+}// class
+}
